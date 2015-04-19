@@ -88,6 +88,10 @@ func (m *Media) GetLimit() int {
 	return m.o.Limit
 }
 
+func (m *Media) GetPage() int {
+	return m.o.Page
+}
+
 func encodeWithoutEscape(v url.Values) string {
 	if v == nil {
 		return ""
