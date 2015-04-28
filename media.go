@@ -2,6 +2,7 @@ package media
 
 import (
 	"bytes"
+	"math"
 	"net/http"
 	"net/url"
 	"sort"
@@ -90,6 +91,14 @@ func (m *Media) GetLimit() int {
 
 func (m *Media) GetPage() int {
 	return m.o.Page
+}
+
+func (m *Media) GetTotalPageCount(max int) int {
+	if max < m.GetLimit() {
+		return 1
+	} else {
+		return int(math.Ceil(float64(max) / float64(m.GetLimit())))
+	}
 }
 
 func encodeWithoutEscape(v url.Values) string {
