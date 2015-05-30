@@ -62,7 +62,7 @@ func (m *Media) SetPageLinks(max int) {
 }
 
 func (m *Media) setSelfLink() {
-	m.setLink("self", *m.r.URL)
+	m.SetLink("self", (*m.r.URL).String())
 }
 
 func (m *Media) setPageLink(rel string, u url.URL, page, limit int) {
@@ -70,13 +70,13 @@ func (m *Media) setPageLink(rel string, u url.URL, page, limit int) {
 	q.Set("page", strconv.Itoa(page))
 	q.Set("limit", strconv.Itoa(limit))
 	u.RawQuery = encodeWithoutEscape(q)
-	m.setLink(rel, u)
+	m.SetLink(rel, u.String())
 }
 
-func (m *Media) setLink(rel string, u url.URL) {
+func (m *Media) SetLink(rel string, u string) {
 	l := &Link{
 		Rel:  rel,
-		Href: u.String(),
+		Href: u,
 	}
 	*m.ls = append(*m.ls, l)
 }
