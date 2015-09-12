@@ -129,23 +129,36 @@ func encodeWithoutEscape(v url.Values) string {
 	return buf.String()
 }
 
-func ParseOrder(val string, allowed []string) (string, string, error) {
-	v := strings.Split(val, ",")
+type Order struct {
+	By string
+	Ty string
+}
 
-	if len(v) != 2 {
-		return "", "", errors.New("wrong ordering format")
+func ParseOrder(val string, allowed []string) ([]Order, error) {
+	vs := strings.Split(val, ",")
+
+	var orders []Order
+
+	for _, val := range vs {
+		v := strings.Split(val, ":")
+
+		if len(v) != 2 {
+			return orders, errors.New("wrong ordering format")
+		}
+
+		by := v[0]
+		ty := v[1]
+
+		if !str.InSlice(by, allowed) {
+			return orders, errors.New("Unvalid ordering field")
+		}
+
+		if !str.InSlice(ty, []string{"desc", "asc"}) {
+			return orders, errors.New("Unvalid ordering type")
+		}
+
+		orders = append(orders, Order{by, ty})
 	}
 
-	by := v[0]
-	ty := v[1]
-
-	if !str.InSlice(by, allowed) {
-		return "", "", errors.New("Unvalid ordering field")
-	}
-
-	if !str.InSlice(ty, []string{"desc", "asc"}) {
-		return "", "", errors.New("Unvalid ordering type")
-	}
-
-	return by, ty, nil
+	return orders, nil
 }
