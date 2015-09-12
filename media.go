@@ -2,11 +2,15 @@ package media
 
 import (
 	"bytes"
+	"errors"
 	"math"
 	"net/http"
 	"net/url"
 	"sort"
 	"strconv"
+	"strings"
+
+	str "github.com/ilgooz/strings"
 )
 
 type Links []*Link
@@ -123,4 +127,25 @@ func encodeWithoutEscape(v url.Values) string {
 		}
 	}
 	return buf.String()
+}
+
+func ParseOrder(val string, allowed []string) (string, string, error) {
+	v := strings.Split(val, ",")
+
+	if len(v) != 2 {
+		return "", "", errors.New("wrong ordering format")
+	}
+
+	by := v[0]
+	ty := v[1]
+
+	if !str.InSlice(by, allowed) {
+		return "", "", errors.New("Unvalid ordering field")
+	}
+
+	if !str.InSlice(ty, []string{"desc", "asc"}) {
+		return "", "", errors.New("Unvalid ordering type")
+	}
+
+	return by, ty, nil
 }
